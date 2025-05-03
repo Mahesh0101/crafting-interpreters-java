@@ -30,13 +30,11 @@ public class Main {
 
     // Uncomment this block to pass the first stage
     
-    if (fileContents.length() > 0) {
-      // throw new RuntimeException("Scanner not implemented");
-    } else {
-      System.out.println("EOF  null"); // Placeholder, remove this line when implementing the scanner
-    }
+    if (fileContents.length() == 0) {
+      System.out.println("EOF  null");
+      return; // Placeholder, remove this line when implementing the scanner
+      }
     // just writig the code without using any classes / structuring. with this project learn the concepts of java and learn best practices then refactor the code.
-
     char c;
     int i = 0;
     while (i < fileContents.length()) {
@@ -64,5 +62,6 @@ public class Main {
       i++;
     }
     System.out.println("EOF  null"); 
+    return;
   }
 }
