@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Main {
+  static boolean hasError;
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.err.println("Logs from your program will appear here!");
@@ -24,6 +25,7 @@ public class Main {
     String fileContents = "";
     try {
       fileContents = Files.readString(Path.of(filename));
+      Main.hasError = false;
     } catch (IOException e) {
       System.err.println("Error reading file: " + e.getMessage());
       System.exit(1);
@@ -41,44 +43,14 @@ public class Main {
       System.out.println(token);
     }
 
-    // just writig the code without using any classes / structuring. with this project learn the concepts of java and learn best practices then refactor the code.
-    // char c;
-    // int i = 0;
-    // while (i < fileContents.length()) {
-    //   c = fileContents.charAt(i);
-      // System.out.println(c);
-      // if (c == ' ') {
-      //   i++;
-      //   continue;
-      // }
-      // if (c == '\n') {
-      //   System.out.println("NEWLINE  null");
-      //   i++;
-      //   continue;
-      // }
-    //   if (c == '(') {
-    //     System.out.println("LEFT_PAREN ( null");
-    //     i++;
-    //     continue;
-    //   }
-    //   if (c == ')') {
-    //     System.out.println("RIGHT_PAREN ) null");
-    //     i++;
-    //     continue;
-    //   }
-    //   if (c == '{') {
-    //     System.out.println("LEFT_BRACE { null");
-    //     i++;
-    //     continue;
-    //   }
-    //   if (c == '}') {
-    //     System.out.println("RIGHT_BRACE } null");
-    //     i++;
-    //     continue;
-    //   }
-    //   i++;
-    // }
-    // System.out.println("EOF  null"); 
+    if (Main.hasError) System.exit(65);
+
     return;
+  }
+  static void error(int line, String message)
+  {
+    // later, implement another private method report to print this message
+    System.err.println("[line " + line + "] Error: " + message);
+    Main.hasError = true;
   }
 }
