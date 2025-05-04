@@ -59,6 +59,9 @@ public class Scanner {
             // so this wont work -> matchNext('=')? addToken(TokenType.EQUAL_EQUAL) : addToken(TokenType.EQUAL);
                 addToken(matchNext('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
                 break;
+            case '!':
+                addToken(matchNext('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+                break;    
             default:
                 Main.error(line, "Unexpected character: " + c);
                 break;
@@ -69,7 +72,7 @@ public class Scanner {
 
         if(isAtEnd()) return false;
         if (source.charAt(current) != expected) return false;
-        
+
         current++;
         return true;
     }
