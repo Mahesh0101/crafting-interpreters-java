@@ -101,10 +101,9 @@ public class Scanner {
 
     private void skipCurrentLine()
     {
-        // this.current = source.length();
-        // this.start = current;
-        // break;
-        while (!isAtEnd() && getCurrentChar() != '\n');
+        this.current = source.length();
+        this.start = current;
+        // while (!isAtEnd() && getCurrentChar() != '\n');
     }
 
     private void addToken(TokenType token){
