@@ -77,6 +77,7 @@ public class Scanner {
                     break;
                 }
                 addToken(TokenType.SLASH);
+                break;
             default:
                 Main.error(line, "Unexpected character: " + c);
                 break;
