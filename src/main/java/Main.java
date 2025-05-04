@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class Main {
   public static void main(String[] args) {
@@ -31,12 +32,20 @@ public class Main {
     if (fileContents.length() == 0) {
       System.out.println("EOF  null");
       return; // Placeholder, remove this line when implementing the scanner
-      }
+    }
+    // System.out.println("hello 123 (({}))".substring(13, 14));
+    ArrayList<Token> tokens = new ArrayList<>();
+    Scanner scanner = new Scanner(fileContents);
+    tokens = scanner.scanTokens();
+    for (Token token : tokens) {
+      System.out.println(token);
+    }
+
     // just writig the code without using any classes / structuring. with this project learn the concepts of java and learn best practices then refactor the code.
-    char c;
-    int i = 0;
-    while (i < fileContents.length()) {
-      c = fileContents.charAt(i);
+    // char c;
+    // int i = 0;
+    // while (i < fileContents.length()) {
+    //   c = fileContents.charAt(i);
       // System.out.println(c);
       // if (c == ' ') {
       //   i++;
@@ -47,29 +56,29 @@ public class Main {
       //   i++;
       //   continue;
       // }
-      if (c == '(') {
-        System.out.println("LEFT_PAREN ( null");
-        i++;
-        continue;
-      }
-      if (c == ')') {
-        System.out.println("RIGHT_PAREN ) null");
-        i++;
-        continue;
-      }
-      if (c == '{') {
-        System.out.println("LEFT_BRACE { null");
-        i++;
-        continue;
-      }
-      if (c == '}') {
-        System.out.println("RIGHT_BRACE } null");
-        i++;
-        continue;
-      }
-      i++;
-    }
-    System.out.println("EOF  null"); 
+    //   if (c == '(') {
+    //     System.out.println("LEFT_PAREN ( null");
+    //     i++;
+    //     continue;
+    //   }
+    //   if (c == ')') {
+    //     System.out.println("RIGHT_PAREN ) null");
+    //     i++;
+    //     continue;
+    //   }
+    //   if (c == '{') {
+    //     System.out.println("LEFT_BRACE { null");
+    //     i++;
+    //     continue;
+    //   }
+    //   if (c == '}') {
+    //     System.out.println("RIGHT_BRACE } null");
+    //     i++;
+    //     continue;
+    //   }
+    //   i++;
+    // }
+    // System.out.println("EOF  null"); 
     return;
   }
 }

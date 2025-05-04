@@ -1,3 +1,6 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "augment.nextEdit.enableBackgroundSuggestions": false,
+    "augment.nextEdit.enableAutoApply": false,
+    "augment.nextEdit.showDiffInHover": true
 }
