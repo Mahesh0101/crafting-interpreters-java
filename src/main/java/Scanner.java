@@ -68,6 +68,15 @@ public class Scanner {
             case '>':
                 addToken(matchNext('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                 break;
+            case '/':
+                // if next matches /-> it's a comment and needs to ignore the line for not lets ignore till EOF
+                if(matchNext('/'))
+                {
+                    this.current = source.length();
+                    this.start = current;
+                    break;
+                }
+                addToken(TokenType.SLASH);
             default:
                 Main.error(line, "Unexpected character: " + c);
                 break;
