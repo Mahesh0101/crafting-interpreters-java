@@ -55,6 +55,7 @@ public class Scanner {
                 addToken(TokenType.STAR);
                 break;
             default:
+                System.out.printf("[line %d] Error: Unexpected character: %c\n",line, c);
                 break;
         }
     }
