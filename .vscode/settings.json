@@ -2,5 +2,9 @@
     "java.configuration.updateBuildConfiguration": "interactive",
     "augment.nextEdit.enableBackgroundSuggestions": false,
     "augment.nextEdit.enableAutoApply": false,
-    "augment.nextEdit.showDiffInHover": true
+    "augment.nextEdit.showDiffInHover": false,
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.quickSuggestions": { "other": true, "comments": true, "strings": true } ,
+    "editor.acceptSuggestionOnEnter": "on" ,
+    "editor.inlineSuggest.enabled": false
 }

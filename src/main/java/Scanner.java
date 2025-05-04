@@ -54,10 +54,24 @@ public class Scanner {
             case '*':
                 addToken(TokenType.STAR);
                 break;
+            case '=':
+            // learned new this, the ternery operator (condition ? expr1 : expr2; ) requires both expr1 and expr2 to be expressions that return a value (even if that value is ignored). But if addToken(...) returns void, you can't use it in a ternary like that.
+            // so this wont work -> matchNext('=')? addToken(TokenType.EQUAL_EQUAL) : addToken(TokenType.EQUAL);
+                addToken(matchNext('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+                break;
             default:
                 Main.error(line, "Unexpected character: " + c);
                 break;
         }
+    }
+
+    private boolean matchNext(char expected){
+
+        if(isAtEnd()) return false;
+        if (source.charAt(current) != expected) return false;
+        
+        current++;
+        return true;
     }
 
     private void addToken(TokenType token){
