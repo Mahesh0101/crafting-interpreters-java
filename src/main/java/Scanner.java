@@ -23,6 +23,7 @@ public class Scanner {
 
     private void scanToken(){
         char c = getCurrentChar();
+        // System.err.println(c);
         switch (c) {
             case '(':
                 addToken(TokenType.LEFT_PAREN);
@@ -69,14 +70,19 @@ public class Scanner {
                 addToken(matchNext('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                 break;
             case '/':
-                // if next matches /-> it's a comment and needs to ignore the line for not lets ignore till EOF
-                if(matchNext('/'))
+                // if next matches /-> it's a comment and needs to ignore the current line
+                if(matchNext('/')) 
                 {
-                    this.current = source.length();
-                    this.start = current;
+                    skipCurrentLine();
                     break;
                 }
                 addToken(TokenType.SLASH);
+                break;
+            case ' ':
+                break;
+            case '\n':
+                break;
+            case '\t':
                 break;
             default:
                 Main.error(line, "Unexpected character: " + c);
@@ -91,6 +97,14 @@ public class Scanner {
 
         current++;
         return true;
+    }
+
+    private void skipCurrentLine()
+    {
+        // this.current = source.length();
+        // this.start = current;
+        // break;
+        while (!isAtEnd() && getCurrentChar() != '\n');
     }
 
     private void addToken(TokenType token){
@@ -111,3 +125,6 @@ public class Scanner {
         return source.charAt(current++);
     }
 }
+
+
+// do you now ? char in Java is an unsigned 16-bit type (ranging from 0 to 65535), it cannot represent -1.
