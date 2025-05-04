@@ -61,7 +61,13 @@ public class Scanner {
                 break;
             case '!':
                 addToken(matchNext('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+                break;
+            case '<':
+                addToken(matchNext('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
                 break;    
+            case '>':
+                addToken(matchNext('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+                break;
             default:
                 Main.error(line, "Unexpected character: " + c);
                 break;
