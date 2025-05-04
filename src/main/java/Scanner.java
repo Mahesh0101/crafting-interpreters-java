@@ -104,7 +104,9 @@ public class Scanner {
     {
         // this.current = source.length();
         // this.start = current;
+        // this introduced a bug it skips new line token which leads to line number to decrease by one
         while (!isAtEnd() && getCurrentChar() != '\n');
+        incrementLineNumber();
     }
 
     private void addToken(TokenType token){
@@ -127,7 +129,7 @@ public class Scanner {
     
     private void incrementLineNumber()
     {
-        line++;
+        line = line + 1;
     }
 }
 
