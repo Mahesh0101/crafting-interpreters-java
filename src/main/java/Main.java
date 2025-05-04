@@ -27,8 +27,6 @@ public class Main {
       System.err.println("Error reading file: " + e.getMessage());
       System.exit(1);
     }
-
-    // Uncomment this block to pass the first stage
     
     if (fileContents.length() == 0) {
       System.out.println("EOF  null");
@@ -56,6 +54,16 @@ public class Main {
       }
       if (c == ')') {
         System.out.println("RIGHT_PAREN ) null");
+        i++;
+        continue;
+      }
+      if (c == '{') {
+        System.out.println("LEFT_BRACE { null");
+        i++;
+        continue;
+      }
+      if (c == '}') {
+        System.out.println("RIGHT_BRACE } null");
         i++;
         continue;
       }
