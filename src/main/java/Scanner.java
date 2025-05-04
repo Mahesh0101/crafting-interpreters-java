@@ -81,6 +81,7 @@ public class Scanner {
             case ' ':
                 break;
             case '\n':
+                incrementLineNumber();
                 break;
             case '\t':
                 break;
@@ -122,6 +123,11 @@ public class Scanner {
     private char getCurrentChar()
     {
         return source.charAt(current++);
+    }
+    
+    private void incrementLineNumber()
+    {
+        line++;
     }
 }
 
