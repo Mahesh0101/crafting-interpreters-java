@@ -35,7 +35,7 @@ public class Main {
       System.out.println("EOF  null");
       return; // Placeholder, remove this line when implementing the scanner
     }
-    System.out.println(fileContents);
+    
     ArrayList<Token> tokens = new ArrayList<>();
     Scanner scanner = new Scanner(fileContents);
     tokens = scanner.scanTokens();
