@@ -91,7 +91,12 @@ public class Scanner {
                 scanStringLiteral();
                 break;
             default:
-                Main.error(line, "Unexpected character: " + c);
+                if (Character.isDigit(c)) {
+                    scanNumberLiteral();
+                }
+                else {
+                    Main.error(line, "Unexpected character: " + c);
+                }
                 break;
         }
     }
@@ -130,9 +135,17 @@ public class Scanner {
 
     private char peek()
     {
+        if (current >= source.length()) return '\0';
         return source.charAt(current);
     }
-    
+
+    private char peekNext()
+    {
+        // \0 in Java is the null character, also known as the NUL character (ASCII code 0).
+        if (current+1 >= source.length()) return '\0';
+        return source.charAt(current+1);
+    }
+
     private void incrementLineNumber()
     {
         line = line + 1;
@@ -155,7 +168,22 @@ public class Scanner {
         String literal = source.substring(start+1, current-1);
         addToken(TokenType.STRING, literal);
     }
+
+    private void scanNumberLiteral()
+    {
+        // consume as many digits possible
+        while (!isAtEnd() && Character.isDigit(peek())) advance();
+        // if dot is present after digits consumed then check next char is a digit and consume as many as possible
+        if(peek() == '.' && Character.isDigit(peekNext()))
+        {
+            //consume .
+            advance();
+            while (!isAtEnd() && Character.isDigit(peek())) advance();
+        }
+        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start,current)));
+    }
 }
 
 
 // do you now ? char in Java is an unsigned 16-bit type (ranging from 0 to 65535), it cannot represent -1.
+// go one char at a time
