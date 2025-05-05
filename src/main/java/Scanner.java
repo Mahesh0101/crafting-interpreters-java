@@ -147,7 +147,7 @@ public class Scanner {
         //reached EOF with out terminating the string. t
         if (isAtEnd()) 
         {
-            Main.error(line, "Unterminated string");
+            Main.error(line, "Unterminated string.");
             return;
         }
         //skipping the current char -> terminated string ".
