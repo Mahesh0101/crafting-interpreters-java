@@ -22,7 +22,7 @@ public class Scanner {
     }
 
     private void scanToken(){
-        char c = getCurrentChar();
+        char c = advance();
         // System.err.println(c);
         switch (c) {
             case '(':
@@ -85,6 +85,11 @@ public class Scanner {
                 break;
             case '\t':
                 break;
+            // token to identify string literal
+
+            case '"':
+                scanStringLiteral();
+                break;
             default:
                 Main.error(line, "Unexpected character: " + c);
                 break;
@@ -94,7 +99,7 @@ public class Scanner {
     private boolean matchNext(char expected){
 
         if(isAtEnd()) return false;
-        if (source.charAt(current) != expected) return false;
+        if (peek() != expected) return false;
 
         current++;
         return true;
@@ -102,11 +107,7 @@ public class Scanner {
 
     private void skipCurrentLine()
     {
-        // this.current = source.length();
-        // this.start = current;
-        // this introduced a bug it skips new line token which leads to line number to decrease by one
-        while (!isAtEnd() && getCurrentChar() != '\n');
-        incrementLineNumber();
+        while (!isAtEnd() && peek() != '\n') advance();
     }
 
     private void addToken(TokenType token){
@@ -122,14 +123,37 @@ public class Scanner {
     {
         return current >= source.length();
     }
-    private char getCurrentChar()
+    private char advance()
     {
         return source.charAt(current++);
+    }
+
+    private char peek()
+    {
+        return source.charAt(current);
     }
     
     private void incrementLineNumber()
     {
         line = line + 1;
+    }
+
+    private void scanStringLiteral(){
+        while (!isAtEnd() && peek() != '"') 
+        {
+            if(peek() == '\n') incrementLineNumber();
+            advance();
+        }
+        //reached EOF with out terminating the string. t
+        if (isAtEnd()) 
+        {
+            Main.error(line, "Unterminated string");
+            return;
+        }
+        //skipping the current char -> terminated string ".
+        advance();
+        String literal = source.substring(start+1, current-1);
+        addToken(TokenType.STRING, literal);
     }
 }
 
