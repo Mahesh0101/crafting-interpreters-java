@@ -94,6 +94,10 @@ public class Scanner {
                 if (Character.isDigit(c)) {
                     scanNumberLiteral();
                 }
+                else if (isAlpha(c))
+                {
+                    scanIdentifier();
+                }
                 else {
                     Main.error(line, "Unexpected character: " + c);
                 }
@@ -181,6 +185,26 @@ public class Scanner {
             while (!isAtEnd() && Character.isDigit(peek())) advance();
         }
         addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start,current)));
+    }
+
+    private void scanIdentifier() {
+        while(!isAtEnd() && isAlphaNumeric(peek())) advance();
+        addToken(TokenType.IDENTIFIER);
+    }
+
+    // check if a character is an alphabet or _
+    private boolean isAlpha(char c)
+    {
+        
+        return (c >= 'a' && c <= 'z' || 
+                c >= 'A' && c <= 'Z' || 
+                c =='_');
+    }
+
+    // check if a character is alphabet or digit or _
+    private boolean isAlphaNumeric(char c)
+    {
+        return isAlpha(c) || Character.isDigit(c);
     }
 }
 
