@@ -20,11 +20,11 @@ public class Parser {
         return equality();
     }
 
-    // production -> comparision (( "=" | "!" ) comparision)*
+    // production -> comparision (( "=" | "!=" ) comparision)*
     private Expr equality()
     {
         Expr expression = comparision();
-        while(match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL))
+        while(match(TokenType.EQUAL_EQUAL, TokenType.BANG_EQUAL))
         {
             Token operater = previous();
             Expr right = comparision();
