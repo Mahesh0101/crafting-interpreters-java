@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.management.RuntimeErrorException;
 
@@ -30,13 +31,29 @@ public class Parser {
         if(match(TokenType.FALSE)) return new Expr.Literal(false);
         if(match(TokenType.TRUE)) return new Expr.Literal(true);
         if(match(TokenType.NIL)) return new Expr.Literal(null);
-        
+
         while(match(TokenType.STRING, TokenType.NUMBER))
         {
             return new Expr.Literal(previous().literal);
         }
 
+        if(match(TokenType.LEFT_PAREN))
+        {
+            Expr expression = expression();
+            Consume(TokenType.RIGHT_PAREN, "Expect closing Paranthesis ')'");
+            return new Expr.Grouping(expression);
+        }
+
         throw new RuntimeException("Expect Expression");
+    }
+
+    private void Consume(TokenType rightParen, String string) {
+        if(check(rightParen))
+        {
+            advance();
+            return;
+        }
+        Main.error(peek().line, "Unexpected character: " + peek().literal + " expected ) after expression");
     }
 
     private boolean match(TokenType... types) {
