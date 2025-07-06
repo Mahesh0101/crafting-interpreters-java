@@ -20,7 +20,20 @@ public class Parser {
     }
 
     private Expr expression() {
-        // TODO Auto-generated method stub
+
+        return unary();
+    }
+
+    // production -> ( "!" | "-") unary
+    //               | primary
+    private Expr unary()
+    {
+        if(match(TokenType.MINUS, TokenType.BANG))
+        {
+            Token operator = previous();
+            Expr right = unary();
+            return new Expr.Unary(operator, right);
+        }
         return primary();
     }
 
