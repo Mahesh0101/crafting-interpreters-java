@@ -39,7 +39,7 @@ public class Main {
     ArrayList<Token> tokens = new ArrayList<>();
     Scanner scanner = new Scanner(fileContents);
     tokens = scanner.scanTokens();
-
+    Parser parser = new Parser(tokens);
     if(command.equals("tokenize"))
     {
       for (Token token : tokens) {
@@ -48,7 +48,6 @@ public class Main {
     }
     else if(command.equals("parse"))
     {
-      Parser parser = new Parser(tokens);
       Expr expression = parser.Parse();
       System.out.println(new AstPrinter().print(expression));
     }

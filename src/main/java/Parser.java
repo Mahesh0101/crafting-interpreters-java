@@ -1,8 +1,5 @@
 import java.util.List;
-import java.util.function.Consumer;
-
-import javax.management.RuntimeErrorException;
-
+// import static TokenType.*;
 public class Parser {
     private final List<Token> tokens;
     private int current = 0; // tracks the curent token in our statement (in parsing expressions challenge we only support one statement). 
@@ -20,8 +17,33 @@ public class Parser {
     }
 
     private Expr expression() {
+        return equality();
+    }
 
-        return term();
+    // production -> comparision (( "=" | "!" ) comparision)*
+    private Expr equality()
+    {
+        Expr expression = comparision();
+        while(match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL))
+        {
+            Token operater = previous();
+            Expr right = comparision();
+            expression = new Expr.Binary(expression, operater, right);
+        }
+        return expression;
+    }
+
+    // production -> term (( ">" | "<" | ">=" | "<=" ) term)*
+    private Expr comparision()
+    {
+        Expr expression = term();
+        while(match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL))
+        {
+            Token operater = previous();
+            Expr right = term();
+            expression = new Expr.Binary(expression, operater, right);
+        }
+        return expression;
     }
 
     // production -> factor (( "+" | "-" ) factor)*
