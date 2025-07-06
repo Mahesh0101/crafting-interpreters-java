@@ -8,8 +8,8 @@ public class AstPrinter implements Expr.Visitor<String>{
         private String paranthesis(String operator, Expr ...exprs) {
             StringBuilder builder = new StringBuilder();
             builder.append("(").append(operator);
-            builder.append(" ");
             for (Expr expr : exprs) {
+                builder.append(" ");
                 builder.append(expr.accept(this));
             }
             builder.append(")");

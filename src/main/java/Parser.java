@@ -21,7 +21,33 @@ public class Parser {
 
     private Expr expression() {
 
-        return unary();
+        return term();
+    }
+
+    // production -> factor (( "+" | "-" ) factor)*
+    private Expr term()
+    {
+        Expr expression = factor();
+        while(match(TokenType.PLUS, TokenType.MINUS))
+        {
+            Token operater = previous();
+            Expr right = factor();
+            expression = new Expr.Binary(expression, operater, right);
+        }
+        return expression;
+    }
+    
+    // production -> unary (( "*" | "/" ) unary)*
+    private Expr factor()
+    {
+        Expr expression = unary();
+        while(match(TokenType.STAR, TokenType.SLASH))
+        {
+            Token operater = previous();
+            Expr right = unary();
+            expression = new Expr.Binary(expression, operater, right);
+        }
+        return expression;
     }
 
     // production -> ( "!" | "-") unary
