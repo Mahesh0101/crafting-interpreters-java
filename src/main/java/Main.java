@@ -40,28 +40,39 @@ public class Main {
     Scanner scanner = new Scanner(fileContents);
     tokens = scanner.scanTokens();
     Parser parser = new Parser(tokens);
+
     if(command.equals("tokenize"))
     {
       for (Token token : tokens) {
         System.out.println(token);
       }
     }
-    else if(command.equals("parse"))
-    {
+    // checking for scanning errors
+    if (Main.hasError) System.exit(65);
+
+    if(command.equals("parse")){
       Expr expression = parser.Parse();
+      //checking for parsing errors
+      if (Main.hasError) System.exit(65);
       System.out.println(new AstPrinter().print(expression));
     }
-
-    if (Main.hasError) System.exit(65);
 
     return;
   }
 
   static void error(int line, String message)
   {
-    // later, implement another private method report to print this message
-    System.err.println("[line " + line + "] Error: " + message);
+    report(line, "", message);
+  }
+
+  private static void report(int line, String where, String message) {
+    System.err.println("[line " + line + "] Error" + where + ": " + message);
     Main.hasError = true;
+  }
+
+  public static void error(Token token, String message) {
+    if (token.type == TokenType.EOF) report(token.line, " at end", message);
+    else report(token.line, " at " + token.lexeme + "'", message);
   }
 
 }

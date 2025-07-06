@@ -1,6 +1,7 @@
 import java.util.List;
 // import static TokenType.*;
 public class Parser {
+    private static class ParseError extends RuntimeException{}
     private final List<Token> tokens;
     private int current = 0; // tracks the curent token in our statement (in parsing expressions challenge we only support one statement). 
 
@@ -11,9 +12,14 @@ public class Parser {
     }
 
     // starting method of recursive parsing. -> calls the expression method.
+    // the reason we are having an try catch here is becasue this is the starting point of expression building. when an exception we want to synchronize the token to start from next valid token.
     Expr Parse()
     {
-        return expression();
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
     }
 
     private Expr expression() {
@@ -101,20 +107,23 @@ public class Parser {
         if(match(TokenType.LEFT_PAREN))
         {
             Expr expression = expression();
-            Consume(TokenType.RIGHT_PAREN, "Expect closing Paranthesis ')'");
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression");
             return new Expr.Grouping(expression);
         }
 
-        throw new RuntimeException("Expect Expression");
+        throw error(peek(), "Expect Expression");
     }
 
-    private void Consume(TokenType rightParen, String string) {
-        if(check(rightParen))
-        {
-            advance();
-            return;
-        }
-        Main.error(peek().line, "Unexpected character: " + peek().literal + " expected ) after expression");
+    private Token Consume(TokenType rightParen, String message) {
+        if(check(rightParen)) return advance();
+            
+        throw error(peek(), message);
+        // Main.error(peek().line, "Unexpected character: " + peek().literal + " expected ) after expression");
+    }
+
+    private ParseError error(Token token, String message) {
+        Main.error(token, message);
+        return new ParseError();
     }
 
     private boolean match(TokenType... types) {
