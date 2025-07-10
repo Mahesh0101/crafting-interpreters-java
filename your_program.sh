@@ -22,3 +22,6 @@ set -e # Exit early if any commands fail
 # - Edit this to change how your program runs locally
 # - Edit .codecrafters/run.sh to change how your program runs remotely
 exec java -jar /tmp/codecrafters-build-interpreter-java/codecrafters-interpreter.jar "$@"
+
+# copy all the tests of lox language https://github.com/munificent/craftinginterpreters/tree/master/test
+# create a bash script to execute all of them. maybe good idea would be to create a unit testing package.

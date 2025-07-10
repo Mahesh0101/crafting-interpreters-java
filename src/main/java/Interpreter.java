@@ -53,7 +53,6 @@ public class Interpreter implements Expr.Visitor<Object>{
                 return (double) left / (double) right;
 
             case EQUAL_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
                 return isEqual(left, right);
                 
             case BANG_EQUAL:
