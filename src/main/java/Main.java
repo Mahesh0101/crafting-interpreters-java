@@ -4,7 +4,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Main {
+
+  private static final Interpreter interpreter = new Interpreter();
   static boolean hasError;
+  static boolean hadRuntimeError;
   public static void main(String[] args) {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.err.println("Logs from your program will appear here!");
@@ -17,7 +20,7 @@ public class Main {
     String command = args[0];
     String filename = args[1];
 
-    if (!(command.equals("tokenize")|| command.equals("parse"))) {
+    if (!(command.equals("tokenize")|| command.equals("parse") || command.equals("interpret"))) {
       System.err.println("Unknown command: " + command);
       System.exit(1);
     }
@@ -50,14 +53,27 @@ public class Main {
     // checking for scanning errors
     if (Main.hasError) System.exit(65);
 
+    Expr expression = parser.Parse();
+
+    //checking for parsing errors
+    if (Main.hasError) System.exit(65);
+
     if(command.equals("parse")){
-      Expr expression = parser.Parse();
-      //checking for parsing errors
-      if (Main.hasError) System.exit(65);
       System.out.println(new AstPrinter().print(expression));
+    }
+    
+    if(command.equals("interpret")){
+      // right now it only interprets the first first expression it encounters. so if it fails it throws an RuntimeError and exits.
+      interpreter.interpret(expression);
+      if (Main.hadRuntimeError) System.exit(70);
     }
 
     return;
+  }
+
+    private static void report(int line, String where, String message) {
+    System.err.println("[line " + line + "] Error" + where + ": " + message);
+    Main.hasError = true;
   }
 
   static void error(int line, String message)
@@ -65,14 +81,14 @@ public class Main {
     report(line, "", message);
   }
 
-  private static void report(int line, String where, String message) {
-    System.err.println("[line " + line + "] Error" + where + ": " + message);
-    Main.hasError = true;
-  }
-
-  public static void error(Token token, String message) {
+  static void error(Token token, String message) {
     if (token.type == TokenType.EOF) report(token.line, " at end", message);
     else report(token.line, " at " + token.lexeme + "'", message);
+  }
+
+  public static void runtimeError(RuntimeError e) {
+    System.err.println("Error:\n" + e.getMessage() + "\n [Line " + e.token.line + "]");
+    hadRuntimeError = true;
   }
 
 }
