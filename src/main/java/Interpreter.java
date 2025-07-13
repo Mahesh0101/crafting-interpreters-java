@@ -1,20 +1,32 @@
+// why Stmt.Visitor<Void> is void ? for now, the statements are 2 types
+// 1) print -> outputs something to user's console
+// 2) Expression -> evaluating it produces side affects.  	(changes in application state.)
 
-public class Interpreter implements Expr.Visitor<Object>{
-    public void interpret(Expr expression)
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
+    public void interpret(List<Stmt> statements)
     {
         try {
-            Object result = evaluate(expression);
-            System.out.println(stringify(result));
+            for (Stmt statement : statements) {
+                evaluate(statement);
+            }
         } catch (RuntimeError e) {
             Main.runtimeError(e);
         }
         
     }
 
+    private void evaluate(Stmt statement) {
+        statement.accept(this);
+    }
+
     private String stringify(Object object) {
         if(object == null) return "nil";
 
-        //TODO understand lox representation of number from chapter 3.
+        // understand lox representation of number from chapter 3.
+        // In Lox, numbers are double-precision floating point values
+        // We display them without the decimal point if they're whole numbers
         if(object instanceof Double)
         {
             String text = object.toString();
@@ -63,10 +75,10 @@ public class Interpreter implements Expr.Visitor<Object>{
                 return (double) left > (double) right;
             case LESS:
                 
-                return (double) left >= (double) right;
+                return (double) left < (double) right;
             case GREATER_EQUAL:
                 
-                return (double) left < (double) right;
+                return (double) left >= (double) right;
             case LESS_EQUAL:
                 
                 return (double) left <= (double) right;
@@ -140,6 +152,19 @@ public class Interpreter implements Expr.Visitor<Object>{
         if(right instanceof Boolean) return (boolean) right;
         return true;
     }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null; // why return null when return type is void. in this case sort of Boxed void -> the class type Void.
+    }
     
 }
 
@@ -157,5 +182,11 @@ public class Interpreter implements Expr.Visitor<Object>{
 // jshell> 0.00/0.00 ==> NaN. (0.00/0.00) ==(0.00/0.00) ==> false. in java, the == operator on primitive doubles preserves the behaviour
 // but the equals() method on double does not. lox uses the latter so it wont follow IEEE
 // also, in java a number divided by floating point zero returns Infinity.
+
+// 5) Java doesn't let us use void as generic type argument for obscure reasons having to do with type erasure (know more on it) and stack.
+// instead there is a seperate "Void" type specially for this use. sort of like boxed void.
+
+
+
 
 // java doesn't do implicit conversion in equality ?

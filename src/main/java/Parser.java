@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 // import static TokenType.*;
 public class Parser {
@@ -13,10 +14,15 @@ public class Parser {
 
     // starting method of recursive parsing. -> calls the expression method.
     // the reason we are having an try catch here is becasue this is the starting point of expression building. when an exception we want to synchronize the token to start from next valid token.
-    Expr Parse()
+    List<Stmt> Parse()
     {
         try {
-            return expression();
+            List<Stmt> statements = new ArrayList<>();
+            while(!isAtEnd())
+            {
+                statements.add(statement());
+            }
+            return statements;
         } catch (ParseError error) {
             return null;
         }
@@ -24,6 +30,30 @@ public class Parser {
 
     private Expr expression() {
         return equality();
+    }
+
+    //production -> PrintStmt | exprStmt
+    private Stmt statement()
+    {
+        if(match(TokenType.PRINT)) return printStatement();
+
+        return expressionStatement();
+    }
+
+    // production -> expression ";"
+    private Stmt expressionStatement() {
+        Expr value = expression();
+        Consume(TokenType.SEMICOLON, "Expect ; after value.");
+        return new Stmt.Expression(value);
+
+    }
+
+    // production -> "print" expression ";"
+    private Stmt printStatement()
+    {
+        Expr value = expression();
+        Consume(TokenType.SEMICOLON, "Expect ; after value.");
+        return new Stmt.Print(value);
     }
 
     // production -> comparision (( "=" | "!=" ) comparision)*

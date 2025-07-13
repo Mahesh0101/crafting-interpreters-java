@@ -64,8 +64,3 @@ abstract class Expr{
 		}
 	}
 }
-
-// questions
-// why static class used ? i.e why the fields are final
-//  do we need to override when implementing an method from abstract class ?
-// need to understand more on interfaces, generics, oops in total.

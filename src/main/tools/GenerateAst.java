@@ -22,6 +22,11 @@ public class GenerateAst {
           "Literal : Object value",
           "Unary : Token operator, Expr right"
         ));
+
+        defineAst(outputDir, "Stmt",  Arrays.asList( // can alos use List.of
+          "Expression : Expr expression",
+          "Print : Expr expression"
+        ));
       }
 
     private static void defineAst(String outputDir, String baseName, List<String> types) throws IOException {
@@ -87,3 +92,6 @@ public class GenerateAst {
 // to run the script
 //javac -d bin src/main/tools/GenerateAst.java
 // java -cp bin GenerateAst src/main/java
+
+// if we have a file with same name as output file and run this program, it'll overwrite the file and save it. 
+// so make sure to review the changes for any overwrites (comments etc)

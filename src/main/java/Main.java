@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
@@ -53,14 +54,14 @@ public class Main {
     // checking for scanning errors
     if (Main.hasError) System.exit(65);
 
-    Expr expression = parser.Parse();
+    List<Stmt> expression = parser.Parse();
 
     //checking for parsing errors
     if (Main.hasError) System.exit(65);
 
-    if(command.equals("parse")){
-      System.out.println(new AstPrinter().print(expression));
-    }
+    // if(command.equals("parse")){
+    //   System.out.println(new AstPrinter().print(expression));
+    // }
     
     if(command.equals("interpret")){
       // right now it only interprets the first first expression it encounters. so if it fails it throws an RuntimeError and exits.
@@ -83,7 +84,7 @@ public class Main {
 
   static void error(Token token, String message) {
     if (token.type == TokenType.EOF) report(token.line, " at end", message);
-    else report(token.line, " at " + token.lexeme + "'", message);
+    else report(token.line, " at " + token.lexeme + " ", message);
   }
 
   public static void runtimeError(RuntimeError e) {
