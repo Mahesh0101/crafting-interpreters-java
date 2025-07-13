@@ -25,7 +25,7 @@ public class GenerateAst {
 
         defineAst(outputDir, "Stmt",  Arrays.asList( // can alos use List.of
           "Expression : Expr expression",
-          "Print : Expr expression"
+          "Print : List<Expr> expressions"
         ));
       }
 

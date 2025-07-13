@@ -24,9 +24,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     private String stringify(Object object) {
         if(object == null) return "nil";
 
-        // understand lox representation of number from chapter 3.
-        // In Lox, numbers are double-precision floating point values
-        // We display them without the decimal point if they're whole numbers
+        // Handle integers - display them as-is
+        if(object instanceof Integer) {
+            return object.toString();
+        }
+
+        // Handle doubles - display them without the decimal point if they're whole numbers
         if(object instanceof Double)
         {
             String text = object.toString();
@@ -48,40 +51,39 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         switch (expr.operator.type) {
             case MINUS:
                 checkNumberOperands(expr.operator, left, right);
-                return (double) left - (double) right;
+                return subtractNumbers(left, right);
 
             case PLUS:
-
-                if (left instanceof Double && right instanceof Double) return (double) left + (double) right;
+                if (isNumber(left) && isNumber(right)) return addNumbers(left, right);
                 if (left instanceof String && right instanceof String) return (String) left + (String) right;
-                throw new RuntimeError(expr.operator, "Operands must be two number or two strings.");
+                throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
 
             case STAR:
                 checkNumberOperands(expr.operator, left, right);
-                return (double) left * (double) right;
-                
+                return multiplyNumbers(left, right);
+
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
-                return (double) left / (double) right;
+                return divideNumbers(left, right);
 
             case EQUAL_EQUAL:
                 return isEqual(left, right);
-                
+
             case BANG_EQUAL:
-                return !isEqual(left, right); // no need to handle for below operator as they will always return a boolean.
+                return !isEqual(left, right);
 
             case GREATER:
-                
-                return (double) left > (double) right;
+                checkNumberOperands(expr.operator, left, right);
+                return compareNumbers(left, right, ">");
             case LESS:
-                
-                return (double) left < (double) right;
+                checkNumberOperands(expr.operator, left, right);
+                return compareNumbers(left, right, "<");
             case GREATER_EQUAL:
-                
-                return (double) left >= (double) right;
+                checkNumberOperands(expr.operator, left, right);
+                return compareNumbers(left, right, ">=");
             case LESS_EQUAL:
-                
-                return (double) left <= (double) right;
+                checkNumberOperands(expr.operator, left, right);
+                return compareNumbers(left, right, "<=");
 
             default:
                 break;
@@ -91,10 +93,57 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     private void checkNumberOperands(Token operator, Object left, Object right) {
-
-        if(left instanceof Double && right instanceof Double) return;
-
+        if(isNumber(left) && isNumber(right)) return;
         throw new RuntimeError(operator, "operands must be two numbers");
+    }
+
+    private boolean isNumber(Object obj) {
+        return obj instanceof Double || obj instanceof Integer;
+    }
+
+    private double toDouble(Object obj) {
+        if (obj instanceof Double) return (Double) obj;
+        if (obj instanceof Integer) return ((Integer) obj).doubleValue();
+        throw new RuntimeException("Object is not a number");
+    }
+
+    private Object addNumbers(Object left, Object right) {
+        if (left instanceof Integer && right instanceof Integer) {
+            return (Integer) left + (Integer) right;
+        }
+        return toDouble(left) + toDouble(right);
+    }
+
+    private Object subtractNumbers(Object left, Object right) {
+        if (left instanceof Integer && right instanceof Integer) {
+            return (Integer) left - (Integer) right;
+        }
+        return toDouble(left) - toDouble(right);
+    }
+
+    private Object multiplyNumbers(Object left, Object right) {
+        if (left instanceof Integer && right instanceof Integer) {
+            return (Integer) left * (Integer) right;
+        }
+        return toDouble(left) * toDouble(right);
+    }
+
+    private Object divideNumbers(Object left, Object right) {
+        // Division always returns double to handle fractional results
+        return toDouble(left) / toDouble(right);
+    }
+
+    private boolean compareNumbers(Object left, Object right, String operator) {
+        double leftVal = toDouble(left);
+        double rightVal = toDouble(right);
+
+        switch (operator) {
+            case ">": return leftVal > rightVal;
+            case "<": return leftVal < rightVal;
+            case ">=": return leftVal >= rightVal;
+            case "<=": return leftVal <= rightVal;
+            default: throw new RuntimeException("Unknown comparison operator");
+        }
     }
 
     private Boolean isEqual(Object left, Object right) {
@@ -131,7 +180,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         switch (expr.operator.type) {
             case MINUS:
                 checkNumberOperand(expr.operator, right);
-                return -(Double)right;
+                if (right instanceof Integer) return -(Integer)right;
+                return -toDouble(right);
             case BANG:
                 return !isTruthy(right);
             default:
@@ -142,7 +192,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     private void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) return;
+        if (isNumber(operand)) return;
         throw new RuntimeError(operator, "operand must be a number.");
     }
 
@@ -161,8 +211,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitPrintStmt(Stmt.Print stmt) {
-        Object value = evaluate(stmt.expression);
-        System.out.println(stringify(value));
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < stmt.expressions.size(); i++) {
+            Object value = evaluate(stmt.expressions.get(i));
+            output.append(stringify(value));
+            if (i < stmt.expressions.size() - 1) {
+                output.append(" ");
+            }
+        }
+        System.out.println(output.toString());
         return null; // why return null when return type is void. in this case sort of Boxed void -> the class type Void.
     }
     

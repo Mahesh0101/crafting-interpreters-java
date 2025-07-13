@@ -48,12 +48,18 @@ public class Parser {
 
     }
 
-    // production -> "print" expression ";"
+    // production -> "print" expression ("," expression)* ";"
     private Stmt printStatement()
     {
-        Expr value = expression();
+        List<Expr> expressions = new ArrayList<>();
+        expressions.add(expression());
+
+        while (match(TokenType.COMMA)) {
+            expressions.add(expression());
+        }
+
         Consume(TokenType.SEMICOLON, "Expect ; after value.");
-        return new Stmt.Print(value);
+        return new Stmt.Print(expressions);
     }
 
     // production -> comparision (( "=" | "!=" ) comparision)*
@@ -122,14 +128,14 @@ public class Parser {
     }
 
     // primary handles our Literal and Grouping from our grammer.
-    // production -> STRING | NUMBER | "nil" | "true" | "false"
+    // production -> STRING | NUMBER | INT | "nil" | "true" | "false"
     //              | "(" expression ")"
     private Expr primary() {
         if(match(TokenType.FALSE)) return new Expr.Literal(false);
         if(match(TokenType.TRUE)) return new Expr.Literal(true);
         if(match(TokenType.NIL)) return new Expr.Literal(null);
 
-        while(match(TokenType.STRING, TokenType.NUMBER))
+        while(match(TokenType.STRING, TokenType.NUMBER, TokenType.INT))
         {
             return new Expr.Literal(previous().literal);
         }

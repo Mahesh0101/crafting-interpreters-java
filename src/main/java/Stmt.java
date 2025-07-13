@@ -1,4 +1,6 @@
 
+import java.util.List;
+
 abstract class Stmt{
 	interface Visitor<R> {
 
@@ -20,11 +22,11 @@ abstract class Stmt{
 		}
 	}
 	static class Print extends Stmt{
-		Print(Expr expression){
-			this.expression = expression;
+		Print(List<Expr> expressions){
+			this.expressions = expressions;
 		}
 
-		final Expr expression;
+		final List<Expr> expressions;
 
 		@Override
 		<R> R accept (Visitor<R> visitor) {

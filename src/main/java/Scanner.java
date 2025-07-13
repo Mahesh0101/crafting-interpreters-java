@@ -198,14 +198,28 @@ public class Scanner {
     {
         // consume as many digits possible
         while (!isAtEnd() && Character.isDigit(peek())) advance();
+
+        boolean isDouble = false;
         // if dot is present after digits consumed then check next char is a digit and consume as many as possible
         if(peek() == '.' && Character.isDigit(peekNext()))
         {
+            isDouble = true;
             //consume .
             advance();
             while (!isAtEnd() && Character.isDigit(peek())) advance();
         }
-        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start,current)));
+
+        String numberText = source.substring(start, current);
+        if (isDouble) {
+            addToken(TokenType.NUMBER, Double.parseDouble(numberText));
+        } else {
+            try {
+                addToken(TokenType.INT, Integer.parseInt(numberText));
+            } catch (NumberFormatException e) {
+                // If integer parsing fails (overflow), treat as double
+                addToken(TokenType.NUMBER, Double.parseDouble(numberText));
+            }
+        }
     }
 // no need to check isAtEnd in the whilelook as peek() already checks if it is at EOF
     private void scanIdentifier() {
